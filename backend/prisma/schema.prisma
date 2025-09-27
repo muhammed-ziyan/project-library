@@ -1,0 +1,155 @@
+// backend/prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Level { 
+  BEGINNER 
+  INTERMEDIATE 
+  ADVANCED 
+}
+
+enum GuidanceType { 
+  FULLY_GUIDED 
+  SEMI_GUIDED 
+  UNGUIDED 
+}
+
+enum SubmissionType { 
+  LINK 
+  FILE 
+  TEXT 
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  shortDesc    String
+  longDesc     String
+  classMin     Int      // e.g., 6
+  classMax     Int      // e.g., 12
+  level        Level
+  guidance     GuidanceType
+  subjects     ProjectSubject[]
+  tags         ProjectTag[]
+  tools        Tool[]
+  prerequisites String[]   // simple list
+  durationHrs  Int?
+  steps        Step[]                // ordered
+  submission   SubmissionSpec?
+  enrollments  Enrollment[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  // Original JSON for traceability
+  sourceJson   Json?
+}
+
+model Step {
+  id          String  @id @default(cuid())
+  projectId   String
+  order       Int
+  title       String
+  description String
+  checklist   ChecklistItem[]
+  resources   Resource[]
+  Project     Project @relation(fields: [projectId], references: [id])
+}
+
+model ChecklistItem {
+  id        String  @id @default(cuid())
+  stepId    String
+  order     Int
+  text      String
+  Step      Step    @relation(fields: [stepId], references: [id])
+}
+
+model Resource {
+  id        String @id @default(cuid())
+  stepId    String
+  title     String
+  url       String
+  type      String // video | article | dataset | notebook | code
+  Step      Step   @relation(fields: [stepId], references: [id])
+}
+
+model Tool {
+  id        String   @id @default(cuid())
+  name      String
+  Project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  projects ProjectTag[]
+}
+
+model Subject {
+  id   String @id @default(cuid())
+  name String @unique
+  projects ProjectSubject[]
+}
+
+model ProjectTag {
+  projectId String
+  tagId     String
+  Project   Project @relation(fields: [projectId], references: [id])
+  Tag       Tag     @relation(fields: [tagId], references: [id])
+  @@id([projectId, tagId])
+}
+
+model ProjectSubject {
+  projectId String
+  subjectId String
+  Project   Project @relation(fields: [projectId], references: [id])
+  Subject   Subject @relation(fields: [subjectId], references: [id])
+  @@id([projectId, subjectId])
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  projectId   String
+  email       String
+  name        String?
+  school      String?
+  classNum    Int
+  createdAt   DateTime @default(now())
+  progress    EnrollmentProgress[]
+  submissions Submission[]
+  Project     Project  @relation(fields: [projectId], references: [id])
+}
+
+model EnrollmentProgress {
+  id           String  @id @default(cuid())
+  enrollmentId String
+  stepId       String
+  checklistId  String?
+  completed    Boolean @default(false)
+  updatedAt    DateTime @updatedAt
+  Enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+}
+
+model SubmissionSpec {
+  id            String         @id @default(cuid())
+  projectId     String  @unique
+  type          SubmissionType
+  instruction   String
+  allowedTypes  String[] // for FILE: ['pdf','zip']
+  Project       Project @relation(fields: [projectId], references: [id])
+}
+
+model Submission {
+  id            String   @id @default(cuid())
+  enrollmentId  String
+  urlOrText     String   // URL to file or text content
+  createdAt     DateTime @default(now())
+  Enrollment    Enrollment @relation(fields: [enrollmentId], references: [id])
+}

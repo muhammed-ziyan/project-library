@@ -23,6 +23,7 @@ yarn-error.log*
 backend/dist/
 frontend/.next/
 frontend/out/
+frontend/build/
 frontend/tsconfig.tsbuildinfo
 
 # Database
@@ -97,6 +98,9 @@ replit.nix
 frontend/.next/
 frontend/out/
 frontend/build/
+frontend/.next/cache/
+frontend/.next/static/
+frontend/.next/server/
 
 # Docker
 .dockerignore
@@ -114,3 +118,54 @@ playwright-report/
 # Storybook
 frontend/.storybook/
 frontend/storybook-static/
+
+# Additional development files
+*.local
+.cache/
+.turbo/
+.vercel/
+.netlify/
+
+# Editor directories and files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# MacOS
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Certificate files
+*.pem
+*.key
+*.crt
+*.csr
+
+# Local configuration overrides
+config.local.js
+config.local.json

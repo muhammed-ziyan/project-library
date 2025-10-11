@@ -12,7 +12,8 @@ import {
   FileText, 
   Plus,
   TrendingUp,
-  Activity
+  Activity,
+  Upload
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -122,15 +123,21 @@ export default function AdminDashboard() {
           <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <Button asChild className="flex-1">
-                <Link href="/admin/upload">
+                <Link href="/admin/projects/create">
                   <Plus className="h-4 w-4 mr-2" />
-                  Upload New Project
+                  Create New Project
                 </Link>
               </Button>
               <Button variant="outline" asChild className="flex-1">
-                <Link href="/admin/projects">
+                <Link href="/admin/projects/manage">
                   <FolderOpen className="h-4 w-4 mr-2" />
                   Manage Projects
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="flex-1">
+                <Link href="/admin/upload">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload JSON
                 </Link>
               </Button>
             </div>

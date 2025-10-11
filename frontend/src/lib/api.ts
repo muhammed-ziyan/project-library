@@ -34,51 +34,57 @@ async function fetchAPI<T>(
       ...options,
     })
 
-    let data: any
-    try {
-      data = await response.json()
-    } catch (jsonError) {
-      console.error('Failed to parse JSON response:', jsonError)
-      console.error('Response status:', response.status)
-      console.error('Response headers:', response.headers)
-      const text = await response.text()
-      console.error('Response text:', text)
-      throw new APIError(
-        'Invalid JSON Response',
-        response.status,
-        'json_parse_error',
-        `Failed to parse response as JSON. Status: ${response.status}`,
-        undefined
-      )
+    const contentType = response.headers.get('content-type') || ''
+    const rawText = await response.text()
+    let data: any = undefined
+    if (rawText && contentType.includes('application/json')) {
+      try {
+        data = JSON.parse(rawText)
+      } catch {
+        // leave data undefined; we'll include rawText below
+      }
     }
 
     if (!response.ok) {
       console.error('API Error Response:', {
         url,
         status: response.status,
-        data
+        data,
+        rawText
       })
       
-      const error = data as ErrorResponse
+      const error = (data || {}) as Partial<ErrorResponse>
       
       // For validation errors, provide more detailed information
-      if (error.type?.includes('validation') && error.errors) {
-        const errorDetails = error.errors.map(err => `${err.path}: ${err.message}`).join(', ')
+      if (error.type?.includes('validation') && (error as any).errors) {
+        const errs = (error as any).errors as Array<{ path: string; message: string }>
+        const errorDetails = errs.map(err => `${err.path}: ${err.message}`).join(', ')
         throw new APIError(
           error.title || 'Validation Error',
-          error.status || response.status,
+          (error.status as number) || response.status,
           error.type || 'validation_error',
           `${error.detail || 'Validation failed'}. Details: ${errorDetails}`,
-          error.errors
+          errs
         )
       }
       
       throw new APIError(
         error.title || 'API Error',
-        error.status || response.status,
+        (error.status as number) || response.status,
         error.type || 'unknown',
-        error.detail || 'An error occurred',
-        error.errors
+        (error.detail as string) || (rawText || 'An error occurred'),
+        (error as any).errors
+      )
+    }
+
+    // Success path: require JSON body; if missing, throw clear error
+    if (data === undefined) {
+      throw new APIError(
+        'Invalid JSON Response',
+        response.status,
+        'json_parse_error',
+        'Expected JSON response but received empty or non-JSON body',
+        undefined
       )
     }
 
@@ -174,6 +180,30 @@ export const projectsAPI = {
     return fetchAPI(`/admin/projects/${projectId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+
+  // Create project manually
+  createAdminProject: (token: string, projectData: any): Promise<{ success: boolean; project: any }> => {
+    return fetchAPI('/admin/projects', {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(projectData),
+    })
+  },
+
+  // Update project
+  updateAdminProject: (token: string, projectId: string, projectData: any): Promise<{ success: boolean; project: any }> => {
+    return fetchAPI(`/admin/projects/${projectId}`, {
+      method: 'PUT',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(projectData),
     })
   },
   // List projects with filters

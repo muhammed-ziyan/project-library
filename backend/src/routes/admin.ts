@@ -251,6 +251,112 @@ export const adminRoutes: FastifyPluginAsync = async (fastify) => {
     }
   })
 
+  // Create project manually
+  fastify.post('/admin/projects', { preHandler: adminGuard }, async (request, reply) => {
+    // Add CORS headers manually
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
+    reply.header('Access-Control-Allow-Credentials', 'true')
+    
+    try {
+      const projectData = request.body as any
+      
+      // Log the incoming data for debugging
+      fastify.log.info('Creating project with data: %s', JSON.stringify(projectData, null, 2))
+      
+      // Validate required fields
+      if (!projectData.slug || !projectData.title || !projectData.subjects || !projectData.steps) {
+        return reply.status(400).send({
+          type: 'https://docs/errors/validation',
+          title: 'Validation Error',
+          status: 400,
+          detail: 'Missing required fields: slug, title, subjects, or steps'
+        })
+      }
+      
+      // Ensure subjects and steps are not empty
+      if (!Array.isArray(projectData.subjects) || projectData.subjects.length === 0) {
+        return reply.status(400).send({
+          type: 'https://docs/errors/validation',
+          title: 'Validation Error',
+          status: 400,
+          detail: 'At least one subject is required'
+        })
+      }
+      
+      if (!Array.isArray(projectData.steps) || projectData.steps.length === 0) {
+        return reply.status(400).send({
+          type: 'https://docs/errors/validation',
+          title: 'Validation Error',
+          status: 400,
+          detail: 'At least one step is required'
+        })
+      }
+      
+      // Import the project using the existing import logic
+      const { ProjectService } = await import('../services/project.service')
+      const newProject = await ProjectService.importProject(projectData)
+
+      return { success: true, project: newProject }
+    } catch (error) {
+      // Log the actual error for debugging
+      fastify.log.error('Project creation error: %s', error instanceof Error ? error.message : String(error))
+      
+      return reply.status(500).send({
+        type: 'https://docs/errors/server',
+        title: 'Server Error',
+        status: 500,
+        detail: `Failed to create project: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        // Add more details in development
+        ...(process.env.NODE_ENV === 'development' && { 
+          stack: error instanceof Error ? error.stack : undefined 
+        })
+      })
+    }
+  })
+
+  // Update project
+  fastify.put('/admin/projects/:id', { preHandler: adminGuard }, async (request, reply) => {
+    // Add CORS headers manually
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
+    reply.header('Access-Control-Allow-Credentials', 'true')
+    
+    try {
+      const { id } = request.params as { id: string }
+      const projectData = request.body as any
+      
+      // Check if project exists
+      const existingProject = await prisma.project.findUnique({
+        where: { id }
+      })
+
+      if (!existingProject) {
+        return reply.status(404).send({
+          type: 'https://docs/errors/not-found',
+          title: 'Project Not Found',
+          status: 404,
+          detail: 'Project not found'
+        })
+      }
+
+      // Import the project using the existing import logic
+      const { ProjectService } = await import('../services/project.service')
+      const updatedProject = await ProjectService.importProject(projectData)
+
+      return { success: true, project: updatedProject }
+    } catch (error) {
+      return reply.status(500).send({
+        type: 'https://docs/errors/server',
+        title: 'Server Error',
+        status: 500,
+        detail: 'Failed to update project'
+      })
+    }
+  })
+
   // Delete project
   fastify.delete('/admin/projects/:id', { preHandler: adminGuard }, async (request, reply) => {
     // Add CORS headers manually

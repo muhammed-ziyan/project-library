@@ -14,8 +14,8 @@ import {
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Projects', href: '/admin/projects', icon: FolderOpen },
-  { name: 'Upload', href: '/admin/upload', icon: Upload },
+  { name: 'Manage Projects', href: '/admin/projects/manage', icon: FolderOpen },
+  { name: 'Upload JSON', href: '/admin/upload', icon: Upload },
 ]
 
 export function AdminSidebar() {

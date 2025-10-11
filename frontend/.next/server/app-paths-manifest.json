@@ -1,4 +1,8 @@
 {
-  "/browse/page": "app/browse/page.js",
-  "/admin/upload/page": "app/admin/upload/page.js"
+  "/project/[slug]/page": "app/project/[slug]/page.js",
+  "/admin/projects/manage/page": "app/admin/projects/manage/page.js",
+  "/admin/projects/page": "app/admin/projects/page.js",
+  "/admin/upload/page": "app/admin/upload/page.js",
+  "/admin/projects/create/page": "app/admin/projects/create/page.js",
+  "/admin/projects/edit/[id]/page": "app/admin/projects/edit/[id]/page.js"
 }

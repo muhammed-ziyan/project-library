@@ -58,14 +58,15 @@ export const submissionRoutes: FastifyPluginAsync = async (fastify) => {
       }
       
       // Check file type if allowed types are specified
-      if (submissionSpec.allowedTypes.length > 0) {
+      const allowedTypes = JSON.parse(submissionSpec.allowedTypes || '[]')
+      if (allowedTypes.length > 0) {
         const fileExtension = data.filename?.split('.').pop()?.toLowerCase()
-        if (!fileExtension || !submissionSpec.allowedTypes.includes(fileExtension)) {
+        if (!fileExtension || !allowedTypes.includes(fileExtension)) {
           return reply.status(400).send({
             type: 'https://docs/errors/validation',
             title: 'Invalid File Type',
             status: 400,
-            detail: `File type '${fileExtension}' is not allowed. Allowed types: ${submissionSpec.allowedTypes.join(', ')}`
+            detail: `File type '${fileExtension}' is not allowed. Allowed types: ${allowedTypes.join(', ')}`
           })
         }
       }

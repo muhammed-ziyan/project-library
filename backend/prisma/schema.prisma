@@ -1,31 +1,15 @@
 // backend/prisma/schema.prisma
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-enum Level { 
-  BEGINNER 
-  INTERMEDIATE 
-  ADVANCED 
-}
-
-enum GuidanceType { 
-  FULLY_GUIDED 
-  SEMI_GUIDED 
-  UNGUIDED 
-}
-
-enum SubmissionType { 
-  LINK 
-  FILE 
-  TEXT 
-}
+// SQLite doesn't support enums, using String with constraints instead
 
 model Project {
   id           String   @id @default(cuid())
@@ -35,12 +19,12 @@ model Project {
   longDesc     String
   classMin     Int      // e.g., 6
   classMax     Int      // e.g., 12
-  level        Level
-  guidance     GuidanceType
+  level        String // BEGINNER, INTERMEDIATE, ADVANCED
+  guidance     String // FULLY_GUIDED, SEMI_GUIDED, UNGUIDED
   subjects     ProjectSubject[]
   tags         ProjectTag[]
   tools        Tool[]
-  prerequisites String[]   // simple list
+  prerequisites String   // JSON string for simple list
   durationHrs  Int?
   steps        Step[]                // ordered
   submission   SubmissionSpec?
@@ -48,7 +32,7 @@ model Project {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   // Original JSON for traceability
-  sourceJson   Json?
+  sourceJson   String? // JSON string
 }
 
 model Step {
@@ -140,9 +124,9 @@ model EnrollmentProgress {
 model SubmissionSpec {
   id            String         @id @default(cuid())
   projectId     String  @unique
-  type          SubmissionType
+  type          String // LINK, FILE, TEXT
   instruction   String
-  allowedTypes  String[] // for FILE: ['pdf','zip']
+  allowedTypes  String // JSON string for FILE: ['pdf','zip']
   Project       Project @relation(fields: [projectId], references: [id])
 }
 
@@ -152,4 +136,11 @@ model Submission {
   urlOrText     String   // URL to file or text content
   createdAt     DateTime @default(now())
   Enrollment    Enrollment @relation(fields: [enrollmentId], references: [id])
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
 }

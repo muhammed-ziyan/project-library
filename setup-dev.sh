@@ -12,13 +12,9 @@ else
     exit 1
 fi
 
-# Check if PostgreSQL is available
-echo "📊 Checking PostgreSQL..."
-if command -v psql &> /dev/null; then
-    echo "✅ PostgreSQL is available"
-else
-    echo "⚠️  PostgreSQL command not found. Make sure PostgreSQL is installed and in PATH"
-fi
+# SQLite will be used for development
+echo "📊 Using SQLite for development database..."
+echo "✅ No additional database setup required"
 
 # Install dependencies
 echo "📦 Installing dependencies..."
@@ -53,12 +49,12 @@ fi
 echo "✅ Development environment setup complete!"
 echo ""
 echo "Next steps:"
-echo "1. Set up your PostgreSQL database"
-echo "2. Update backend/.env with your database URL"
-echo "3. Run: npm run db:setup"
-echo "4. Run: npm run dev"
+echo "1. Run: npm run db:push (to create SQLite database)"
+echo "2. Run: npm run seed:admin (to create admin user)"
+echo "3. Run: npm run dev"
 echo ""
 echo "The application will be available at:"
 echo "  Frontend: http://localhost:5000"
 echo "  Backend:  http://localhost:3000"
+
 

@@ -183,7 +183,14 @@ export class ProjectService {
       subjects: project.subjects.map((s: any) => s.Subject.name),
       tags: project.tags.map((t: any) => t.Tag.name),
       tools: project.tools.map((t: any) => t.name),
-      prerequisites: project.prerequisites,
+      prerequisites: (() => {
+        try {
+          return JSON.parse(project.prerequisites || '[]')
+        } catch (error) {
+          console.warn(`Invalid JSON in prerequisites for project ${project.slug}:`, project.prerequisites)
+          return []
+        }
+      })(),
       durationHrs: project.durationHrs,
       steps: project.steps.map((step: any) => ({
         id: step.id,
@@ -194,12 +201,61 @@ export class ProjectService {
       submission: project.submission ? {
         type: project.submission.type,
         instruction: project.submission.instruction,
-        allowedTypes: project.submission.allowedTypes
+        allowedTypes: (() => {
+          try {
+            return JSON.parse(project.submission.allowedTypes || '[]')
+          } catch (error) {
+            console.warn(`Invalid JSON in allowedTypes for project ${project.slug}:`, project.submission.allowedTypes)
+            return []
+          }
+        })()
       } : undefined
     }
   }
   
   static async importProject(projectData: any) {
+    // Check if project exists
+    const existingProject = await prisma.project.findUnique({
+      where: { slug: projectData.slug }
+    })
+    
+    if (existingProject) {
+      // Delete existing relations in correct order (child records first)
+      // First delete checklist items and resources (they reference steps)
+      const steps = await prisma.step.findMany({
+        where: { projectId: existingProject.id },
+        select: { id: true }
+      })
+      
+      for (const step of steps) {
+        await prisma.checklistItem.deleteMany({
+          where: { stepId: step.id }
+        })
+        await prisma.resource.deleteMany({
+          where: { stepId: step.id }
+        })
+      }
+      
+      // Then delete steps
+      await prisma.step.deleteMany({
+        where: { projectId: existingProject.id }
+      })
+      
+      // Delete other relations
+      await prisma.projectSubject.deleteMany({
+        where: { projectId: existingProject.id }
+      })
+      await prisma.projectTag.deleteMany({
+        where: { projectId: existingProject.id }
+      })
+      await prisma.tool.deleteMany({
+        where: { projectId: existingProject.id }
+      })
+      await prisma.submissionSpec.deleteMany({
+        where: { projectId: existingProject.id }
+      })
+    }
+    
     const mappedData = await ProjectMapper.mapJsonToDb(projectData)
     
     const project = await prisma.project.upsert({

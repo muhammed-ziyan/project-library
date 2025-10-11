@@ -1,0 +1,33 @@
+{
+  "slug": "your-project-slug",
+  "title": "Your Project Title",
+  "shortDesc": "A brief description of your project (at least 10 characters)",
+  "longDesc": "A detailed description of your project and what students will learn (at least 10 characters)",
+  "classRange": { "min": 8, "max": 12 },
+  "level": "BEGINNER",
+  "guidance": "FULLY_GUIDED",
+  "subjects": ["Computer Science", "Mathematics"],
+  "tags": ["Python", "Data Analysis"],
+  "tools": ["Python", "pandas", "matplotlib"],
+  "prerequisites": ["Basic Python"],
+  "durationHrs": 4,
+  "steps": [
+    {
+      "order": 1,
+      "title": "Step 1 Title",
+      "description": "Description of what students will do in this step",
+      "checklist": [
+        { "order": 1, "text": "First task to complete" },
+        { "order": 2, "text": "Second task to complete" }
+      ],
+      "resources": [
+        { "title": "Resource Title", "url": "https://example.com", "type": "article" }
+      ]
+    }
+  ],
+  "submission": {
+    "type": "TEXT",
+    "instruction": "Describe your findings and results",
+    "allowedTypes": []
+  }
+}

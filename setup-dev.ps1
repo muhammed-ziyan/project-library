@@ -12,19 +12,9 @@ try {
     exit 1
 }
 
-# Check if PostgreSQL is running
-Write-Host "📊 Checking PostgreSQL..." -ForegroundColor Yellow
-try {
-    # Try to connect to PostgreSQL (this will fail if not running)
-    $pgCheck = psql --version 2>$null
-    if ($pgCheck) {
-        Write-Host "✅ PostgreSQL is available" -ForegroundColor Green
-    } else {
-        Write-Host "⚠️  PostgreSQL command not found. Make sure PostgreSQL is installed and in PATH" -ForegroundColor Yellow
-    }
-} catch {
-    Write-Host "⚠️  Could not verify PostgreSQL installation" -ForegroundColor Yellow
-}
+# SQLite will be used for development
+Write-Host "📊 Using SQLite for development database..." -ForegroundColor Yellow
+Write-Host "✅ No additional database setup required" -ForegroundColor Green
 
 # Install dependencies
 Write-Host "📦 Installing dependencies..." -ForegroundColor Yellow
@@ -59,12 +49,12 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "✅ Development environment setup complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "1. Set up your PostgreSQL database" -ForegroundColor White
-Write-Host "2. Update backend/.env with your database URL" -ForegroundColor White
-Write-Host "3. Run: npm run db:setup" -ForegroundColor White
-Write-Host "4. Run: npm run dev" -ForegroundColor White
+Write-Host "1. Run: npm run db:push (to create SQLite database)" -ForegroundColor White
+Write-Host "2. Run: npm run seed:admin (to create admin user)" -ForegroundColor White
+Write-Host "3. Run: npm run dev" -ForegroundColor White
 Write-Host ""
 Write-Host "The application will be available at:" -ForegroundColor Cyan
 Write-Host "  Frontend: http://localhost:5000" -ForegroundColor White
 Write-Host "  Backend:  http://localhost:3000" -ForegroundColor White
+
 

@@ -1,0 +1,4 @@
+version: '3.8'
+
+# Using SQLite for development - no database service needed
+# SQLite database file will be created at backend/prisma/dev.db

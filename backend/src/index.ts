@@ -1,8 +1,10 @@
+import 'dotenv/config'
 import fastify from 'fastify'
 import { corsPlugin } from './middlewares/cors'
 import { errorHandler } from './middlewares/errorHandler'
 import { healthRoutes } from './routes/health'
 import { projectRoutes } from './routes/projects'
+import { adminRoutes } from './routes/admin'
 import { enrollmentRoutes } from './routes/enrollments'
 import { submissionRoutes } from './routes/submissions'
 import { stepRoutes } from './routes/steps'
@@ -18,13 +20,16 @@ server.setErrorHandler(errorHandler)
 // Register routes
 server.register(healthRoutes)
 server.register(projectRoutes)
+server.register(adminRoutes)
 server.register(enrollmentRoutes)
 server.register(submissionRoutes)
 server.register(stepRoutes)
 
 // Serve static files for uploaded submissions
+import path from 'path'
+const storageRoot = path.join(process.cwd(), 'storage', 'projects')
 server.register(require('@fastify/static'), {
-  root: require('path').join(__dirname, '../../storage/projects'),
+  root: storageRoot,
   prefix: '/files/'
 })
 

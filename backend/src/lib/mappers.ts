@@ -37,23 +37,19 @@ export class ProjectMapper {
       classMax: projectData.classRange.max,
       level: projectData.level,
       guidance: projectData.guidance,
-      prerequisites: projectData.prerequisites,
+      prerequisites: JSON.stringify(projectData.prerequisites),
       durationHrs: projectData.durationHrs,
-      sourceJson: projectData as any,
+      sourceJson: JSON.stringify(projectData),
       subjects: {
-        deleteMany: {},
         create: subjectIds.map(subjectId => ({ subjectId }))
       },
       tags: {
-        deleteMany: {},
         create: tagIds.map(tagId => ({ tagId }))
       },
       tools: {
-        deleteMany: {},
         create: projectData.tools.map(tool => ({ name: tool }))
       },
       steps: {
-        deleteMany: {},
         create: projectData.steps.map(step => ({
           order: step.order,
           title: step.title,
@@ -80,11 +76,10 @@ export class ProjectMapper {
       ? {
           ...projectCreateData,
           submission: {
-            deleteMany: {},
             create: {
               type: projectData.submission.type,
               instruction: projectData.submission.instruction,
-              allowedTypes: projectData.submission.allowedTypes
+              allowedTypes: JSON.stringify(projectData.submission.allowedTypes)
             }
           }
         }

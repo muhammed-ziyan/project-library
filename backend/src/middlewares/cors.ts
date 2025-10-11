@@ -3,9 +3,16 @@ import { FastifyPluginAsync } from 'fastify'
 
 export const corsPlugin: FastifyPluginAsync = async (fastify) => {
   await fastify.register(fastifyCors, {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['http://localhost:3000', 'http://localhost:5000']
-      : true,
-    credentials: true
+    origin: true, // Allow all origins
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type', 
+      'Authorization', 
+      'x-admin-key',
+      'Access-Control-Allow-Origin',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods'
+    ]
   })
 }

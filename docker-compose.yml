@@ -1,0 +1,4 @@
+version: '3.8'
+
+# PostgreSQL service removed - using native PostgreSQL installation
+# Make sure PostgreSQL is running on localhost:5432 with database 'project_library'

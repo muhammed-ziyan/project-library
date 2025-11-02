@@ -22,8 +22,8 @@ import { Loader2 } from 'lucide-react'
 
 const enrollmentSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-  school: z.string().min(2, 'School name must be at least 2 characters').optional(),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  school: z.string().min(2, 'School name must be at least 2 characters'),
   classNum: z.number().min(1).max(12, 'Class must be between 1 and 12'),
 })
 
@@ -135,13 +135,14 @@ export function EnrollmentModal({
 
           <div>
             <label htmlFor="name" className="text-sm font-medium">
-              Full Name (Optional)
+              Full Name *
             </label>
             <Input
               id="name"
               {...register('name')}
               className={errors.name ? 'border-red-500' : ''}
               placeholder="Your full name"
+              required
             />
             {errors.name && (
               <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
@@ -150,13 +151,14 @@ export function EnrollmentModal({
 
           <div>
             <label htmlFor="school" className="text-sm font-medium">
-              School/Institution (Optional)
+              School/Institution *
             </label>
             <Input
               id="school"
               {...register('school')}
               className={errors.school ? 'border-red-500' : ''}
               placeholder="Your school or institution"
+              required
             />
             {errors.school && (
               <p className="text-sm text-red-500 mt-1">{errors.school.message}</p>

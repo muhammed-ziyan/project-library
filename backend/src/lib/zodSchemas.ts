@@ -47,8 +47,8 @@ export const ProjectJsonSchema = z.object({
 export const EnrollmentCreateSchema = z.object({
   projectSlug: z.string(),
   email: z.string().email(),
-  name: z.string().optional(),
-  school: z.string().optional(),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  school: z.string().min(2, 'School name must be at least 2 characters'),
   classNum: z.number().int().min(1).max(12)
 })
 

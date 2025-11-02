@@ -3,6 +3,7 @@ import { ProjectsQuerySchema, ProjectJsonSchema } from '../lib/zodSchemas'
 import { ProjectService } from '../services/project.service'
 import { adminGuard } from '../middlewares/admin'
 import multipart from '@fastify/multipart'
+import { parse as parseYaml } from 'yaml'
 
 export const projectRoutes: FastifyPluginAsync = async (fastify) => {
   // Register multipart for file uploads
@@ -250,17 +251,21 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
           type: 'https://docs/errors/validation',
           title: 'No File Provided',
           status: 400,
-          detail: 'A JSON file containing an array of projects is required for batch import'
+          detail: 'A YAML or JSON file containing an array of projects is required for batch import'
         })
       }
 
-      // Validate file type
-      if (!data.filename?.endsWith('.json')) {
+      // Validate file type - support YAML and JSON
+      const filename = data.filename || ''
+      const isYaml = filename.endsWith('.yaml') || filename.endsWith('.yml')
+      const isJson = filename.endsWith('.json')
+      
+      if (!isYaml && !isJson) {
         return reply.status(400).send({
           type: 'https://docs/errors/validation',
           title: 'Invalid File Type',
           status: 400,
-          detail: 'Only JSON files are allowed for batch import'
+          detail: 'Only YAML (.yaml, .yml) or JSON (.json) files are allowed for batch import'
         })
       }
 
@@ -276,21 +281,27 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       const buffer = await data.toBuffer()
-      let jsonContent: any
+      const fileContent = buffer.toString()
+      let parsedContent: any
       
       try {
-        jsonContent = JSON.parse(buffer.toString())
-      } catch (parseError) {
+        if (isYaml) {
+          parsedContent = parseYaml(fileContent)
+        } else {
+          parsedContent = JSON.parse(fileContent)
+        }
+      } catch (parseError: any) {
+        const formatName = isYaml ? 'YAML' : 'JSON'
         return reply.status(400).send({
           type: 'https://docs/errors/validation',
-          title: 'Invalid JSON Format',
+          title: `Invalid ${formatName} Format`,
           status: 400,
-          detail: 'The uploaded file contains invalid JSON syntax'
+          detail: `The uploaded file contains invalid ${formatName} syntax${parseError.message ? `: ${parseError.message}` : ''}`
         })
       }
 
       // Validate that it's an array
-      if (!Array.isArray(jsonContent)) {
+      if (!Array.isArray(parsedContent)) {
         return reply.status(400).send({
           type: 'https://docs/errors/validation',
           title: 'Invalid Batch Format',
@@ -302,13 +313,13 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
       const results = {
         successful: [] as any[],
         failed: [] as any[],
-        total: jsonContent.length
+        total: parsedContent.length
       }
 
       // Process each project
-      for (let i = 0; i < jsonContent.length; i++) {
+      for (let i = 0; i < parsedContent.length; i++) {
         try {
-          const validatedProject = ProjectJsonSchema.parse(jsonContent[i])
+          const validatedProject = ProjectJsonSchema.parse(parsedContent[i])
           const project = await ProjectService.importProject(validatedProject)
           
           results.successful.push({
@@ -338,7 +349,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
             index: i,
             error: errorMessage,
             details: errorDetails,
-            data: jsonContent[i]
+            data: parsedContent[i]
           })
         }
       }

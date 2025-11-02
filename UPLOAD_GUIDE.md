@@ -1,6 +1,6 @@
-# Enhanced JSON Upload System
+# Enhanced YAML/JSON Upload System
 
-This guide covers the improved JSON file upload system for the Project Library, featuring better error handling, validation, and user experience.
+This guide covers the improved YAML and JSON file upload system for the Project Library, featuring better error handling, validation, and user experience. **YAML format is recommended for better readability**, especially for bulk uploads.
 
 ## Features
 
@@ -17,14 +17,14 @@ This guide covers the improved JSON file upload system for the Project Library, 
 - Upload summary with statistics
 
 ### 🔄 **Multiple Upload Modes**
-- **Individual Files**: Upload multiple JSON files separately
-- **Batch Upload**: Upload a single JSON file containing an array of projects
-- **Mixed Mode**: Automatic detection and handling
+- **Individual Files**: Upload multiple YAML or JSON files separately
+- **Batch Upload**: Upload a single YAML or JSON file containing an array of projects
+- **Format Support**: YAML (.yaml, .yml) recommended, JSON (.json) supported
 
 ### 🛡️ **Robust Validation**
 - Pre-upload validation with detailed error messages
 - File size limits (10MB individual, 50MB batch)
-- JSON syntax validation
+- YAML and JSON syntax validation
 - Schema validation using Zod
 - Required field checking
 
@@ -62,11 +62,12 @@ Headers: x-admin-key: your-key
 
 #### 3. New Batch Upload (`/projects/import-batch`)
 ```typescript
-// Batch upload for multiple projects
+// Batch upload for multiple projects (supports YAML and JSON)
 POST /projects/import-batch
 Content-Type: multipart/form-data
 Headers: x-admin-key: your-key
 
+// Accepts: .yaml, .yml, or .json files containing an array of projects
 // Response includes detailed results
 {
   "success": true,
@@ -179,9 +180,84 @@ The `upload-manual.ps1` script now supports multiple upload modes:
 - **Error Reporting**: Displays detailed error messages
 - **Progress Tracking**: Shows upload progress and results
 
-## JSON File Formats
+## File Formats
 
-### Single Project Format
+### Single Project Format (YAML - Recommended)
+```yaml
+slug: my-project
+title: My Project
+shortDesc: A short description
+longDesc: |
+  A longer description that can span
+  multiple lines without escaping
+  making it much easier to read
+classRange:
+  min: 1
+  max: 12
+level: BEGINNER
+guidance: FULLY_GUIDED
+subjects:
+  - Math
+  - Science
+tags:
+  - education
+  - hands-on
+tools:
+  - Python
+  - Jupyter
+prerequisites:
+  - Basic programming
+durationHrs: 2
+steps:
+  - order: 1
+    title: Step 1
+    description: |
+      Description of step 1 that can also
+      span multiple lines for clarity
+    checklist:
+      - order: 1
+        text: Complete task 1
+      - order: 2
+        text: Verify results
+    resources:
+      - title: Resource 1
+        url: https://example.com
+        type: documentation
+submission:
+  type: LINK
+  instruction: Submit your project link
+  allowedTypes:
+    - url
+```
+
+### Batch Upload Format (YAML - Recommended)
+```yaml
+# Batch upload of multiple projects
+# Created: 2024-01-15
+# Total: 2 projects
+
+- slug: project-1
+  title: Project 1
+  shortDesc: First project description
+  longDesc: Detailed description here
+  classRange:
+    min: 8
+    max: 12
+  level: BEGINNER
+  # ... rest of project data
+
+- slug: project-2
+  title: Project 2
+  shortDesc: Second project description
+  longDesc: Another detailed description
+  classRange:
+    min: 6
+    max: 10
+  level: INTERMEDIATE
+  # ... rest of project data
+```
+
+### Single Project Format (JSON - Also Supported)
 ```json
 {
   "slug": "my-project",
@@ -227,18 +303,42 @@ The `upload-manual.ps1` script now supports multiple upload modes:
 }
 ```
 
-### Batch Upload Format
+### Batch Upload Format (JSON - Also Supported)
 ```json
 [
   {
     "slug": "project-1",
     "title": "Project 1",
-    // ... project data
+    "shortDesc": "First project",
+    "longDesc": "Detailed description",
+    "classRange": { "min": 8, "max": 12 },
+    "level": "BEGINNER",
+    "guidance": "FULLY_GUIDED",
+    "subjects": ["Math"],
+    "steps": [
+      {
+        "order": 1,
+        "title": "Step 1",
+        "description": "Description here"
+      }
+    ]
   },
   {
-    "slug": "project-2", 
+    "slug": "project-2",
     "title": "Project 2",
-    // ... project data
+    "shortDesc": "Second project",
+    "longDesc": "Another description",
+    "classRange": { "min": 6, "max": 10 },
+    "level": "INTERMEDIATE",
+    "guidance": "SEMI_GUIDED",
+    "subjects": ["Science"],
+    "steps": [
+      {
+        "order": 1,
+        "title": "Step 1",
+        "description": "Description here"
+      }
+    ]
   }
 ]
 ```
@@ -264,10 +364,12 @@ The `upload-manual.ps1` script now supports multiple upload modes:
 ## Best Practices
 
 ### File Preparation
-1. **Validate JSON**: Ensure files are valid JSON before upload
+1. **Validate Format**: Ensure files are valid YAML or JSON before upload
 2. **Check Schema**: Verify all required fields are present
 3. **Test Locally**: Use the manual script to test uploads
 4. **Batch Processing**: Use batch upload for multiple projects
+5. **YAML Tips**: Use consistent indentation (2 spaces recommended), avoid tabs
+6. **Comments**: YAML supports comments (use #) which can be helpful for documentation
 
 ### Error Handling
 1. **Review Errors**: Check validation errors before retrying
@@ -285,10 +387,12 @@ The `upload-manual.ps1` script now supports multiple upload modes:
 
 ### Common Issues
 
-**"Invalid JSON Format"**
-- Check JSON syntax with a validator
+**"Invalid YAML/JSON Format"**
+- For YAML: Check indentation (must use spaces, not tabs)
+- For JSON: Check JSON syntax with a validator
 - Ensure proper encoding (UTF-8)
 - Verify file isn't corrupted
+- Use a YAML validator for YAML files
 
 **"Validation Failed"**
 - Check all required fields are present

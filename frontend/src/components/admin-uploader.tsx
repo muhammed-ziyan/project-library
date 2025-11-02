@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useMutation } from '@tanstack/react-query'
 import { projectsAPI } from '@/lib/api'
+import * as yaml from 'js-yaml'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -153,23 +154,70 @@ export function AdminUploader({ token }: AdminUploaderProps) {
     for (const file of acceptedFiles) {
       try {
         const text = await file.text()
-        const projectData = JSON.parse(text)
+        const isYaml = file.name.endsWith('.yaml') || file.name.endsWith('.yml')
+        const isJson = file.name.endsWith('.json')
         
-        const { normalized, warnings } = normalizeProjectData(projectData)
+        let projectData: any
+        if (isYaml) {
+          try {
+            projectData = yaml.load(text)
+          } catch (yamlError) {
+            errors.push(`${file.name}: Invalid YAML format - ${yamlError instanceof Error ? yamlError.message : 'Unknown error'}`)
+            continue
+          }
+        } else if (isJson) {
+          try {
+            projectData = JSON.parse(text)
+          } catch (jsonError) {
+            errors.push(`${file.name}: Invalid JSON format - ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`)
+            continue
+          }
+        } else {
+          errors.push(`${file.name}: Unsupported file type. Please use .json, .yaml, or .yml files`)
+          continue
+        }
+        
+        // Handle batch mode - if it's an array, validate each project
+        if (uploadMode === 'batch' && Array.isArray(projectData)) {
+          // For batch mode with array, just validate it's an array (backend will handle individual validation)
+          if (projectData.length === 0) {
+            errors.push(`${file.name}: Batch file must contain at least one project`)
+            continue
+          }
+          // Add a preview entry showing it's a batch file
+          previews.push({
+            slug: `batch-${file.name}`,
+            title: `Batch Upload: ${projectData.length} project(s)`,
+            shortDesc: `Contains ${projectData.length} project${projectData.length > 1 ? 's' : ''} for batch processing`,
+            level: 'N/A',
+            guidance: 'N/A',
+            subjects: [],
+            tags: [],
+            steps: [],
+          })
+        } else {
+          // Individual mode or single project - validate and normalize
+          if (uploadMode === 'batch' && !Array.isArray(projectData)) {
+            errors.push(`${file.name}: Batch mode requires an array of projects`)
+            continue
+          }
+          
+          const { normalized, warnings } = normalizeProjectData(projectData)
 
-        previews.push({
-          slug: normalized.slug,
-          title: normalized.title,
-          shortDesc: normalized.shortDesc,
-          level: normalized.level,
-          guidance: normalized.guidance,
-          subjects: normalized.subjects,
-          tags: normalized.tags,
-          steps: normalized.steps,
-          warnings,
-        })
+          previews.push({
+            slug: normalized.slug,
+            title: normalized.title,
+            shortDesc: normalized.shortDesc,
+            level: normalized.level,
+            guidance: normalized.guidance,
+            subjects: normalized.subjects,
+            tags: normalized.tags,
+            steps: normalized.steps,
+            warnings,
+          })
+        }
       } catch (error) {
-        errors.push(`${file.name}: Invalid JSON format - ${error instanceof Error ? error.message : 'Unknown error'}`)
+        errors.push(`${file.name}: Invalid format - ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
 
@@ -181,7 +229,10 @@ export function AdminUploader({ token }: AdminUploaderProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'application/json': ['.json']
+      'application/json': ['.json'],
+      'application/x-yaml': ['.yaml', '.yml'],
+      'text/yaml': ['.yaml', '.yml'],
+      'text/x-yaml': ['.yaml', '.yml']
     },
     multiple: true,
     maxSize: uploadMode === 'batch' ? 50 * 1024 * 1024 : 10 * 1024 * 1024, // 50MB for batch, 10MB for individual
@@ -439,9 +490,9 @@ export function AdminUploader({ token }: AdminUploaderProps) {
               <Info className="h-4 w-4 text-blue-500 mt-0.5" />
               <div className="text-sm">
                 {uploadMode === 'individual' ? (
-                  <p>Upload multiple JSON files individually. Each file should contain a single project definition.</p>
+                  <p>Upload multiple YAML or JSON files individually. Each file should contain a single project definition. YAML is recommended for better readability.</p>
                 ) : (
-                  <p>Upload a single JSON file containing an array of project objects for batch processing.</p>
+                  <p>Upload a single YAML or JSON file containing an array of project objects for batch processing. YAML is recommended for better readability.</p>
                 )}
               </div>
             </div>
@@ -452,15 +503,15 @@ export function AdminUploader({ token }: AdminUploaderProps) {
       {/* Upload Area */}
       <Card>
         <CardHeader>
-          <CardTitle>Upload Project JSON Files</CardTitle>
+          <CardTitle>Upload Project Files</CardTitle>
           <CardDescription>
             {uploadMode === 'individual' 
-              ? 'Drag and drop JSON files or click to select. Each file should contain a complete project definition.'
-              : 'Upload a single JSON file containing an array of project objects for batch processing.'
+              ? 'Drag and drop YAML or JSON files or click to select. Each file should contain a complete project definition. YAML format is recommended for better readability.'
+              : 'Upload a single YAML or JSON file containing an array of project objects for batch processing. YAML format is recommended for better readability.'
             }
             <br />
             <span className="text-xs text-muted-foreground">
-              Need a template? <a href="/project-template.json" target="_blank" className="text-blue-600 hover:underline">Download project template</a>
+              Need a template? <a href="/project-template.json" target="_blank" className="text-blue-600 hover:underline">Download JSON template</a>
             </span>
           </CardDescription>
         </CardHeader>
@@ -476,10 +527,10 @@ export function AdminUploader({ token }: AdminUploaderProps) {
             <input {...getInputProps()} />
             <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-lg font-medium mb-2">
-              {isDragActive ? 'Drop files here' : `Drag & drop ${uploadMode === 'batch' ? 'JSON file' : 'JSON files'} here`}
+              {isDragActive ? 'Drop files here' : `Drag & drop ${uploadMode === 'batch' ? 'YAML/JSON file' : 'YAML/JSON files'} here`}
             </p>
             <p className="text-sm text-muted-foreground mb-4">
-              or click to select {uploadMode === 'batch' ? 'file' : 'files'}
+              or click to select {uploadMode === 'batch' ? 'file' : 'files'} (.yaml, .yml, or .json)
             </p>
             <Button variant="outline">
               Select {uploadMode === 'batch' ? 'File' : 'Files'}

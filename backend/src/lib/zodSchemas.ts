@@ -66,6 +66,21 @@ export const SubmissionCreateSchema = z.object({
   urlOrText: z.string()
 })
 
+// Group member schema
+export const AddGroupMemberSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address').optional().or(z.literal('')),
+  phoneNumber: z.string()
+    .optional()
+    .refine((val) => {
+      if (!val || val === '') return true
+      return /^\+[1-9]\d{1,14}$/.test(val)
+    }, 'Phone number must be in international format (e.g., +919876543210)')
+    .or(z.literal('')),
+  school: z.string().optional(),
+  classNum: z.number().int().min(1).max(12).optional(),
+})
+
 // Query schemas
 export const ProjectsQuerySchema = z.object({
   class: z.coerce.number().int().min(1).max(12).optional(),
@@ -95,5 +110,6 @@ export type EnrollmentCreate = z.infer<typeof EnrollmentCreateSchema>
 export type ChecklistUpdate = z.infer<typeof ChecklistUpdateSchema>
 export type StepUpdate = z.infer<typeof StepUpdateSchema>
 export type SubmissionCreate = z.infer<typeof SubmissionCreateSchema>
+export type AddGroupMember = z.infer<typeof AddGroupMemberSchema>
 export type ProjectsQuery = z.infer<typeof ProjectsQuerySchema>
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>

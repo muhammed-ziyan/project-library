@@ -360,6 +360,20 @@ export const enrollmentsAPI = {
   }> => {
     return fetchAPI(`/enrollments/${enrollmentId}/submissions`)
   },
+
+  // Add group member to enrollment
+  addGroupMember: (enrollmentId: string, memberData: {
+    name: string
+    email?: string
+    phoneNumber?: string
+    school?: string
+    classNum?: number
+  }): Promise<{ success: boolean; group: any }> => {
+    return fetchAPI(`/enrollments/${enrollmentId}/group-member`, {
+      method: 'POST',
+      body: JSON.stringify(memberData),
+    })
+  },
 }
 
 export { APIError }

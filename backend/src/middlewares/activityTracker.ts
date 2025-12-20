@@ -3,12 +3,17 @@ import { ActivityService, ActivityType } from '../services/activity.service'
 
 /**
  * Middleware to track activity after successful request
+ * Note: This middleware should be used as a preHandler that tracks activity
+ * after the route handler completes. For proper tracking, use logActivity helper
+ * directly in route handlers or use a postHandler pattern.
  */
 export const activityTracker = (activityType: ActivityType) => {
   return async (request: FastifyRequest, reply: FastifyReply) => {
-    // Hook into the onSend lifecycle to track after successful response
-    reply.addHook('onSend', async (request, reply, payload) => {
-      // Only track successful responses (2xx status codes)
+    // Store original send method to track after response
+    const originalSend = reply.send.bind(reply)
+    
+    reply.send = function(payload: any): FastifyReply {
+      // Track activity after successful response (2xx status codes)
       if (reply.statusCode >= 200 && reply.statusCode < 300) {
         try {
           // Extract enrollmentId from request body or params
@@ -36,9 +41,9 @@ export const activityTracker = (activityType: ActivityType) => {
           console.error('Activity tracking error:', error)
         }
       }
-
-      return payload
-    })
+      
+      return originalSend(payload)
+    }
   }
 }
 

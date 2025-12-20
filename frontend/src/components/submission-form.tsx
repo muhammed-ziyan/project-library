@@ -24,7 +24,7 @@ const textSubmissionSchema = z.object({
 })
 
 const fileSubmissionSchema = z.object({
-  file: z.instanceof(File, 'Please select a file'),
+  file: z.instanceof(File, { message: 'Please select a file' }),
 })
 
 type LinkSubmissionData = z.infer<typeof linkSubmissionSchema>

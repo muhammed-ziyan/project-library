@@ -66,6 +66,12 @@ export const SubmissionCreateSchema = z.object({
   urlOrText: z.string()
 })
 
+// Phone number schema
+export const PhoneNumberSchema = z.string()
+  .refine((val) => {
+    return /^\+[1-9]\d{1,14}$/.test(val)
+  }, 'Phone number must be in international format (e.g., +919876543210)')
+
 // Group member schema
 export const AddGroupMemberSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),

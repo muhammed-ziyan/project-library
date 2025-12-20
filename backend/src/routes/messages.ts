@@ -47,7 +47,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
 
       return result
     } catch (error) {
-      fastify.log.error('Get messages error:', error)
+      fastify.log.error('Get messages error: %s', error instanceof Error ? error.message : String(error))
       return reply.status(500).send({
         type: 'https://docs/errors/server',
         title: 'Server Error',
@@ -69,7 +69,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
       const result = await MessageService.getUnreadCount(user.userId)
       return result
     } catch (error) {
-      fastify.log.error('Get unread count error:', error)
+      fastify.log.error('Get unread count error: %s', error instanceof Error ? error.message : String(error))
       return reply.status(500).send({
         type: 'https://docs/errors/server',
         title: 'Server Error',
@@ -111,7 +111,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
         })
       }
 
-      fastify.log.error('Mark as read error:', error)
+      fastify.log.error('Mark as read error: %s', error instanceof Error ? error.message : String(error))
       return reply.status(500).send({
         type: 'https://docs/errors/server',
         title: 'Server Error',

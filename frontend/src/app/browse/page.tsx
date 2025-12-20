@@ -34,7 +34,7 @@ export default function BrowsePage() {
   const { data: projectsData, isLoading, error } = useQuery({
     queryKey: ['projects', filters],
     queryFn: () => projectsAPI.list(filters),
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
   })
 
   // Extract unique subjects and tags from all projects for filter options

@@ -75,7 +75,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
         user: result.user
       }
     } catch (error) {
-      fastify.log.error('Registration error:', error)
+      fastify.log.error('Registration error: %s', error instanceof Error ? error.message : String(error))
       return reply.status(400).send({
         type: 'https://docs/errors/registration',
         title: 'Registration Failed',

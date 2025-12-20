@@ -67,6 +67,11 @@ export interface EnrollmentDetailDTO {
     title: string
     level: Level
     guidance: GuidanceType
+    submission?: {
+      type: SubmissionType
+      instruction: string
+      allowedTypes: string[]
+    }
   }
   stepsWithProgress: StepWithProgressDTO[]
 }

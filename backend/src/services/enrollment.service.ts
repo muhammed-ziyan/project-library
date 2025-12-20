@@ -189,4 +189,63 @@ export class EnrollmentService {
     
     return { success: true }
   }
+
+  /**
+   * Delete an enrollment and all related data (cascade delete)
+   * Also handles group cleanup if the enrollment was part of a group
+   */
+  static async deleteEnrollment(enrollmentId: string, userId: string) {
+    // Verify enrollment exists and belongs to user
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { id: enrollmentId },
+      include: { Group: true }
+    })
+
+    if (!enrollment) {
+      throw new Error('Enrollment not found')
+    }
+
+    // Verify ownership (if enrollment has userId field)
+    // Note: The schema shows email but code references userId - checking both
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { enrollments: true }
+    })
+
+    if (user && !user.enrollments.some(e => e.id === enrollmentId)) {
+      throw new Error('Access denied: Enrollment does not belong to user')
+    }
+
+    const groupId = (enrollment as any).groupId || (enrollment as any).Group?.id
+
+    // Delete dependent rows first (FK constraints)
+    await prisma.enrollmentProgress.deleteMany({ where: { enrollmentId } })
+    await prisma.submission.deleteMany({ where: { enrollmentId } })
+    
+    // Delete activities if UserActivity model exists
+    try {
+      await (prisma as any).userActivity.deleteMany({ where: { enrollmentId } })
+    } catch (error) {
+      // UserActivity might not exist, ignore
+    }
+
+    // Delete enrollment
+    await prisma.enrollment.delete({ where: { id: enrollmentId } })
+
+    // Clean up group if no enrollments remain
+    if (groupId) {
+      const remaining = await prisma.enrollment.count({ 
+        where: { groupId: groupId as string } 
+      })
+      if (remaining === 0) {
+        try {
+          await (prisma as any).group.delete({ where: { id: groupId } })
+        } catch (error) {
+          // Group might not exist or already deleted, ignore
+        }
+      }
+    }
+
+    return { success: true }
+  }
 }

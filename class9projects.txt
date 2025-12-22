@@ -1,0 +1,313 @@
+Project 1: "What Color Change?" – Reaction Type Spotter
+Description: Look at 4 photos of different chemical reactions and train AI to sort them.
+AI Type: Multi-class Classification (Computer Vision)
+Time: 90 minutes
+Tools Used: Teachable Machine (Image Project) + 4 pre-made image sets (Downloaded from internet)
+Steps:
+Download image sets:
+Class 1 "Fizzing": Vinegar + baking soda (10 images of bubbles)
+Class 2 "Turning Color": pH indicator change (10 images)
+Class 3 "Getting Cloudy": Milk + vinegar (10 images)
+Class 4 "Rusting": Rusty nails (10 images)
+Create 4 classes in Teachable Machine
+Upload images
+Train
+Test with 8 new reaction photos
+Submission:
+1 sample per class (4 images)
+Training screenshot
+Test table: Photo # | Predicted reaction | Correct? | What did AI notice?
+Learning Goal: Visual features in chemistry; pattern recognition beyond textbook understanding.
+
+Project 2: "Anomaly in Health Data" – Outlier with Context
+Description: Find unusual health readings (BMI, heart rate) and hypothesize why.
+AI Type: Anomaly Detection + Interpretation
+Time: 60 minutes
+Tools Used: Google Sheets 
+Steps:
+Generate synthetic anonymized class health data (15–20 students):
+Height, Weight, Resting heart rate, Exercise days/week
+Calculate BMI for each
+In Sheets: Find outliers (>2 std dev from average)
+Optional: Use Gemini Nano to auto-generate hypotheses:
+Paste: "Height 180cm, Weight 55kg → BMI ___. Is this unusual? Why?"
+Gemini responds: "Unusual because XYZ"
+Verify if hypotheses make sense
+Submission:
+Health data table
+Outliers highlighted
+For each outlier: Gemini hypothesis + Your feedback (realistic? y/n)
+Conclusion: "Outliers often mean _____ or _____"
+Learning Goal: Context matters; outliers aren't always errors. AI can generate hypotheses; humans verify.
+
+Project 3: "Bias in LLM Responses" – Language Model Fairness
+Description: Ask ChatGPT/Gemini the same question in different ways; see if answers change based on gender/ethnicity hints.
+AI Type: Fairness & Bias in Language Models
+Time: 90 minutes
+Tools Used: ChatGPT / Gemini 
+Steps:
+Prepare base question: "Describe a successful doctor."
+Rephrase with identity hints:
+"A successful male doctor is…"
+"A successful female doctor is…"
+"A successful Indian doctor is…"
+"A successful doctor is…" (neutral)
+Feed all 4 to ChatGPT; save responses
+Compare: Do answers differ? Stereotypes present?
+Grade for bias (0–5 scale)
+Submission:
+All 4 prompts + responses (screenshots)
+Comparison table: Prompt | Mentions gender? | Stereotypes? | Bias score (1–5)
+Reflection: "The model showed bias when ____. This could harm ____ because…"
+Learning Goal: LLMs absorb biases from training data. Language matters. AI ethics is real.
+
+Project 4: "House Price Predictor"
+Description: Train an AI to predict house prices based on 3 features: size (sq ft), number of rooms, and age (years).
+AI Type: Regression (Supervised Learning - Continuous Prediction)
+Time: 90 minutes
+Tools Used: Google Colab 
+Subject Link: Chapter 5: Heat & Temperature / Chapter 10: Electricity (understanding relationships between variables)
+Detailed Steps:
+Open Google Colab:
+Go to colab.research.google.com
+Click "New notebook"
+Rename: "House Price Predictor"
+Import Libraries (Cell 1):
+python
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+print(" Libraries loaded!")
+
+Create House Dataset (Cell 2):
+python
+np.random.seed(42)
+
+size = np.random.randint(800, 4000, 100)  # House size (sq ft)
+rooms = np.random.randint(2, 8, 100)  # Number of rooms
+age = np.random.randint(0, 50, 100)  # Age of house (years)
+
+# Price formula: larger & newer = more expensive
+price = 100*size + 50000*rooms - 1000*age + np.random.randint(-50000, 50000, 100)
+
+df = pd.DataFrame({
+    'Size (sq ft)': size,
+    'Rooms': rooms,
+    'Age (years)': age,
+    'Price (₹)': price
+})
+
+print("Dataset preview:")
+print(df.head(10))
+print(f"\nPrice range: ₹{df['Price (₹)'].min():,.0f} to ₹{df['Price (₹)'].max():,.0f}")
+
+Prepare Features & Labels (Cell 3):
+python
+X = df[['Size (sq ft)', 'Rooms', 'Age (years)']]
+y = df['Price (₹)']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print(f"Training houses: {len(X_train)}")
+print(f"Testing houses: {len(X_test)}")
+
+Train Regression Model (Cell 4):
+python
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+print("Model trained!")
+print("\nModel learned:")
+print(f"  Size: ₹{model.coef_[0]:.0f} per sq ft increase")
+print(f"  Rooms: ₹{model.coef_[1]:.0f} per extra room")
+print(f"  Age: ₹{model.coef_[2]:.0f} per year older")
+
+Make Predictions (Cell 5):
+python
+y_pred = model.predict(X_test)
+
+print("First 10 predictions:")
+print("-" * 70)
+for i in range(10):
+    actual = y_test.iloc[i]
+    predicted = y_pred[i]
+    error = abs(actual - predicted)
+    print(f"Actual: ₹{actual:10.0f} | Predicted: ₹{predicted:10.0f} | Error: ₹{error:8.0f}")
+
+Calculate Performance Metrics (Cell 6):
+python
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print("Model Performance:")
+print(f"RMSE (avg error): ₹{rmse:.0f}")
+print(f"R² Score: {r2:.3f} (1.0 = perfect, 0.0 = terrible)")
+
+if r2 > 0.9:
+    print(" Excellent model!")
+elif r2 > 0.7:
+    print("Good model!")
+else:
+    print("Model needs more data")
+
+Visualize Actual vs Predicted (Cell 7):
+python
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.6, s=100)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Actual Price (₹)')
+plt.ylabel('Predicted Price (₹)')
+plt.title('House Price Prediction: Actual vs Predicted')
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# Prediction Errors
+errors = y_test.values - y_pred
+plt.figure(figsize=(10, 5))
+plt.hist(errors, bins=15, edgecolor='black', alpha=0.7)
+plt.xlabel('Prediction Error (₹)')
+plt.ylabel('Frequency')
+plt.title('Distribution of Prediction Errors')
+plt.axvline(x=0, color='r', linestyle='--', lw=2)
+plt.show()
+
+Analyze Feature Impact (Cell 8):
+python
+feature_names = ['Size (sq ft)', 'Rooms', 'Age (years)']
+coefficients = model.coef_
+
+plt.figure(figsize=(8, 5))
+colors = ['green' if c > 0 else 'red' for c in coefficients]
+plt.barh(feature_names, coefficients, color=colors)
+plt.xlabel('Coefficient (impact on price)')
+plt.title('Which features affect house price most?')
+plt.show()
+
+print("Feature Impact:")
+for i, feature in enumerate(feature_names):
+    impact = coefficients[i]
+    if impact > 0:
+        print(f"  ✅ {feature}: +₹{impact:.0f} per unit")
+    else:
+        print(f"  ❌ {feature}: -₹{abs(impact):.0f} per unit")
+
+Predict Custom House Prices (Cell 9):
+python
+print("="*60)
+print("PREDICT YOUR OWN HOUSE PRICES!")
+print("="*60)
+
+houses = [
+    [1200, 3, 25],   # Small old house
+    [3000, 6, 2],    # Large new house
+    [2000, 4, 0]     # Medium brand new
+]
+
+descriptions = [
+    "House 1: 1200 sq ft, 3 rooms, 25 years old",
+    "House 2: 3000 sq ft, 6 rooms, 2 years old",
+    "House 3: 2000 sq ft, 4 rooms, Brand NEW"
+]
+
+for house, desc in zip(houses, descriptions):
+    pred = model.predict([house])[0]
+    print(f"\n{desc}")
+    print(f"Predicted Price: ₹{pred:,.0f}")
+
+Submission Method:
+2-page PDF with:
+(1) Dataset preview screenshot
+(2) Actual vs Predicted scatter plot
+(3) Prediction errors histogram
+(4) Feature impact bar chart
+(5) Custom predictions (3 houses)
+(6) 8-10 line conclusion: "R² was . RMSE was ₹__. Most important feature: . House 1 predicted as ₹ because _____. Model limitations: _____"
+Learning Outcomes:
+● Understand regression: predicting continuous numbers (not categories)
+● Multiple features → single outcome relationship
+● Regression metrics: RMSE, R²
+● Feature impact analysis
+● Understanding prediction errors
+● Real-world application thinking
+
+
+Project 5: "Rare Disease Diagnosis Assistant" 
+Description: Train AI on symptom combinations to assist in rare disease diagnosis (NOT for replacement, but for decision support).
+AI Type: Classification
+Time: 90 minutes
+Tools Used: Google Colab
+Subject Connection: Chapter 7: Life Processes (Disease, immunity) / Health Science
+Concept: Disease diagnosis, symptom patterns, medical AI (AI-assisted diagnosis)
+Real-world use: Medical AI helps doctors diagnose rare conditions they may not encounter often; telemedicine platforms use AI for preliminary screening
+Link: Patient symptoms (checklist) → Symptom patterns → AI suggests likely disease → Doctor confirms diagnosis
+Detailed Steps:
+Create dataset of rare diseases with symptoms:
+text
+| Fever | Joint_pain | Rash | Headache | Vision_issues | Diagnosis |
+| Yes | Yes | Yes | Yes | No | Dengue fever |
+| No | Yes | No | No | Yes | Rheumatoid arthritis |
+| Yes | No | Yes | No | No | Measles |
+| No | No | No | Yes | Yes | Multiple sclerosis |
+
+
+(Simplified; real medical data is complex)
+In Orange:
+Load data
+Classification widget (Decision Tree or Random Forest)
+Test & Score
+Use trained model:
+text
+Patient presents with: Fever=Yes, Joint_pain=Yes, Rash=Yes, Headache=Yes, Vision=No
+AI output: "Similar patterns suggest Dengue fever (confidence 87%)"
+Doctor's role: "Confirm with blood test (NS1 antigen detection)"
+
+Submission:
+Symptom-disease dataset table
+Orange model accuracy
+Confusion analysis:
+text
+Where does AI fail?
+- Dengue vs Chikungunya: Similar symptoms (fever, joint pain, rash)
+  AI accuracy: 78% (not confident enough to use alone)
+- Multiple conditions present: AI predicts only primary disease
+
+Real medical AI limitations:
+"AI should suggest top 3 diagnoses, not definitively diagnose"
+"Doctor's clinical judgment + physical exam + lab tests = final diagnosis"
+"Rare diseases are rare in training data → AI performs poorly on them"
+
+
+14-line reflection: "Rare diseases are hard to diagnose because _____. Doctors' experience is limited by _____. AI can store knowledge of thousands of patients' patterns. My AI model achieved ___% accuracy on test data. This is good but not perfect—real doctors would use it as a _____. Ethical principles: (1) AI assists doctors, not replaces them; (2) Final diagnosis requires _____; (3) Patient autonomy—patients have right to _____. Limitations: Dataset contains ____ disease patterns; if patient has unstudied rare disease, AI fails. Class imbalance: Common diseases have thousands of cases; rare diseases have only tens. India's healthcare challenge: Most diseases are diagnosed by symptoms alone due to _____ tests being expensive. AI could democratize diagnosis by helping rural doctors in _____. Real implementation would need _____. This connects to Ch 7 because diagnosis is about understanding disease's _____"
+Learning Goal:
+ Understand disease diagnosis and clinical reasoning
+ AI as decision-support (not replacement)
+ Medical ethics and AI responsibility
+ Healthcare access inequality
+ Data bias in medical AI (rare disease representation)
+
+Project 6 : “Pure Substance Tester”
+Description: Train AI to classify photos of mixtures (e.g., sand-water) vs solutions (e.g., salt-water) from household ingredients, revealing how substances dissolve completely or not.​”
+AI Type: Image Classification
+Time: 70 minutes
+Tools Used: Teachable Machine (Image) 
+Subject Connection: Chapter 2: Is Matter Around Us Pure? (solutions dissolve uniformly; mixtures retain particles)​
+Prerequisites: Webcam/phone camera, household items (salt, sugar, sand, water), internet access.
+Detailed Steps
+Open Teachable Machine → Image Project (teachablemachine.withgoogle.com).
+Class 1 "Mixture": Photo sand+water, oil+water (20 images each, shake/stir visibly).
+Class 2 "Solution": Photo salt+water, sugar+water (20 images each, fully dissolved).
+Train model → Preview with webcam.
+Test: Try new combos (flour+water, lemon+water); note AI confusions.
+Export/share model link.
+Submission & Reflection
+Screenshot: Trained model + 5 test results (correct/wrong predictions).
+1-paragraph note: "AI confused X with Y because... This shows solutions are uniform while mixtures have visible bits."
+
+

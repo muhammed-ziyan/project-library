@@ -1,0 +1,231 @@
+Project 1: "pH Test Guesses" – Safe Substance Sorter
+Description: Classify household items into "Acidic," "Basic," or "Neutral" from photos only (NO experiments).
+AI Type: Ternary Classification (Computer Vision)
+Time: 75 minutes
+Tools Used: Teachable Machine (Image Project)
+Steps:
+Download photos of:
+Acidic items: Lemon, vinegar, yogurt labels (15 images)
+Basic items: Soap, baking soda, detergent labels (15 images)
+Neutral items: Milk, oil, sugar labels (15 images)
+Create 3 classes in Teachable Machine
+Upload 15 images per class
+Train the model
+Test with 5 new product images (e.g., tomato ketchup, dish soap)
+Submission:
+3 sample training images (one per class)
+Training screenshot
+Test results: Product name | Model prediction | Correct?
+Learning Goal: Multi-class classification; how AI groups by visual similarity (not chemistry knowledge).
+
+Project 2: "Temperature Trend" – Simple Prediction Game
+Description: Use a simple number table to predict temperature.
+AI Type: Regression (Numeric)
+Time: 60 minutes
+Tools Used: Google Sheets 
+Steps:
+Collect data : Time of day (9am, 10am, 11am…) and Temperature (20°C, 22°C, 24°C…) for 7–10 time points
+In Google Sheets, make a table with Time and Temperature
+Highlight both columns → Insert → Chart → Scatter chart
+Add a trendline (right-click on data → Add trendline)
+Use the chart to guess: What will temperature be at 3pm?
+Write down your guess
+Submission:
+Screenshot of chart with trendline
+Table: Predicted time | Your temperature guess | Actual temperature (if known) | Error (°C)
+Learning Goal: Patterns in data; predictions from trends.
+
+Project 3: "Iris Flower Classifier"
+Description: Train an AI to classify iris flowers into 3 types (Setosa, Versicolor, Virginica) based on leaf measurements (sepal length, sepal width, petal length, petal width).
+AI Type: Classification (Supervised Learning)
+Time: 90 minutes
+Tools Used: Google Colab 
+Subject Link: Chapter 2: Diversity in Living World (Plant Classification)
+Prerequisites: Google account, basic Python knowledge (optional)
+Detailed Steps:
+Open Google Colab:
+Go to colab.research.google.com
+Click "New notebook"
+Rename: "Iris Flower Classifier"
+Import Libraries (Cell 1):
+python
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+
+print(" All libraries imported!")
+
+Click Run
+Load Iris Dataset (Cell 2):
+python
+iris = load_iris()
+X = iris.data  # Features: measurements
+y = iris.target  # Labels: flower type
+
+df = pd.DataFrame(X, columns=iris.feature_names)
+df['Flower Type'] = iris.target_names[y]
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 flowers:")
+print(df.head())
+print("\nFlower types:", iris.target_names)
+
+Split Data (Cell 3):
+python
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+print(f"Training: {len(X_train)} flowers | Testing: {len(X_test)} flowers")
+
+Train Model (Cell 4):
+python
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+print("Model trained!")
+
+Make Predictions (Cell 5):
+python
+y_pred = model.predict(X_test)
+
+print("First 10 predictions:")
+for i in range(10):
+    actual = iris.target_names[y_test[i]]
+    predicted = iris.target_names[y_pred[i]]
+    match = "✅" if actual == predicted else "❌"
+    print(f"{match} Actual: {actual:15} | Predicted: {predicted}")
+
+Calculate Accuracy (Cell 6):
+python
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy * 100:.1f}%")
+
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print(cm)
+
+Visualize Results (Cell 7):
+python
+import seaborn as sns
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=iris.target_names,
+            yticklabels=iris.target_names)
+plt.title('Confusion Matrix: Iris Classification')
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()
+
+# Feature Importance
+plt.figure(figsize=(8, 5))
+plt.barh(iris.feature_names, model.feature_importances_)
+plt.xlabel('Importance')
+plt.title('Which measurements matter most?')
+plt.show()
+
+Test Custom Input (Cell 8):
+python
+custom_flower = [[5.5, 3.0, 4.0, 1.5]]  # Your own measurements
+prediction = model.predict(custom_flower)
+confidence = model.predict_proba(custom_flower)
+
+print(f"Flower measurements: {custom_flower[0]}")
+print(f"Predicted type: {iris.target_names[prediction[0]]}")
+print(f"\nConfidence:")
+for i, flower_type in enumerate(iris.target_names):
+    print(f"  {flower_type}: {confidence[0][i]*100:.1f}%")
+
+Submission Method:
+1-page PDF with:
+Confusion matrix screenshot
+Feature importance bar chart
+Custom prediction test result
+5-line conclusion: "Model accuracy was ___%. Most important feature: _____. Model confused _____ because _____."
+Learning Outcomes:
+● Understand supervised learning: examples + labels → model
+● Train/test split concept
+● Classification metrics: accuracy, confusion matrix
+● Feature importance analysis
+● How AI makes decisions
+
+
+Project 4: "Hand Gesture Game Controller"
+Description: Train AI to recognize hand gestures (rock, paper, scissors) and control a Scratch game.
+AI Type: Image Classification + Game Integration
+Time: 60 minutes
+Tools Used: Teachable Machine (Image) + Scratch
+Detailed Steps:
+Open Teachable Machine → Image Project
+Class 1 "Rock": Hold fist 20 times
+Class 2 "Paper": Open palm 20 times
+Class 3 "Scissors": Hold V-shape 20 times
+Train
+Export as JavaScript
+In Scratch: Use Teachable Machine extension → Map predictions to sprite movements
+Create simple game: "Catch falling rocks/papers"
+Submission:
+Screenshots: 3 trained classes + Scratch project screenshot + gameplay recording
+3-line note: "My game responds to _____ gesture. It works best when _____. It fails when _____"
+Learning Goal: Connect AI predictions to game logic; how AI controls interactive experiences.
+
+Project 5: "Disease Symptom Classifier" 
+Description: Train AI on disease descriptions (cold, flu, allergy); predict from symptoms; connect to immune system & body defense.
+AI Type: Text Classification
+Time: 75 minutes
+Tools Used: PictoBlox (Text ML)
+Subject Connection: Chapter 7: Life Processes (or Chapter 4: Cell: Structure and Function); Health & Hygiene
+Biology Concept: Disease symptoms, immune response, body defense mechanisms
+Link: Pathogens invade → Body responds with symptoms → AI recognizes symptom patterns → Disease identified
+Discussion: "Symptoms are your body's response to infection. Can AI predict disease better than symptoms alone?"
+Detailed Steps:
+Open PictoBlox → Text ML
+Class 1 "Cold": "Runny nose", "Mild cough", "Sore throat", "Sneezing" (10 examples)
+Class 2 "Flu": "High fever", "Body ache", "Fatigue", "Headache" (10 examples)
+Class 3 "Allergy": "Itchy eyes", "Sneezing fit", "Watery nose", "Rashes" (10 examples)
+Train
+Test with new symptom descriptions
+Compare with real diagnosis rates
+Submission:
+3 training examples (one per disease)
+Test results: 12 symptom descriptions | AI prediction | Correct diagnosis?
+Table: Disease | Accuracy | Most confused with | Why
+Immune system diagram (simple): Show how body fights each disease
+8-line reflection: "Symptoms occur because _____ (immune response). Cold vs Flu differ by _____. AI classified correctly ___% of the time. It confused cold and allergy because they both have _____. Doctors use additional tests (blood, etc.) because _____. AI in medicine could help by _____ but should NOT replace _____ because _____. Ethical note: _____"
+Learning Goal:
+ Understand disease symptoms as immune response
+ Pattern recognition in biology
+ AI in medicine (ethics, limitations, human oversight)
+
+
+Project 6: "Posture & Exercise Form Checker" 
+Description: Train AI to detect correct vs incorrect posture during exercises (e.g., proper push-up form, correct sitting posture).
+AI Type: Pose Detection (Computer Vision)
+Time: 90 minutes
+Tools Used: PictoBlox (Pose Detection) OR Teachable Machine (Image)
+Subject Connection: Chapter 1: Food for Health / Physical Education (Fitness, Exercise Science)
+Concept: Body biomechanics, muscle engagement, injury prevention, ergonomics
+Real-world use: Fitness apps (AI coaches), physical therapy clinics (automated form correction), workplace ergonomics (prevent RSI)
+Link: Body position (joint angles, spine alignment) → Posture classification → Feedback (correct/incorrect) → Injury prevention
+Detailed Steps:
+Film yourself or classmates doing exercise (e.g., push-ups):
+Correct form: Straight back, elbows at 90°, head aligned with spine (20 videos)
+Incorrect form: Sagging back, elbows flared, head drooping (20 videos)
+In PictoBlox: Upload frames from videos
+Train pose detection model
+Test on new exercise videos
+Accuracy = does AI catch when form breaks?
+Submission:
+Video clips (30 sec each): Correct push-up vs incorrect push-up
+Training data (5 frames per class showing pose)
+Test results: "Detected correct form ___% of the time | Detected incorrect form ___% of the time"
+Learning Goal:
+ Understand body biomechanics and exercise science
+ Injury prevention through proper form
+ Real-time AI feedback applications
+ Healthcare cost reduction through automation
+ AI complementing human expertise (not replacing)
+

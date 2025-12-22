@@ -360,6 +360,175 @@ export const enrollmentsAPI = {
   }> => {
     return fetchAPI(`/enrollments/${enrollmentId}/submissions`)
   },
+
+  // Add group member to enrollment
+  addGroupMember: (enrollmentId: string, memberData: {
+    name: string
+    email?: string
+    phoneNumber?: string
+    school?: string
+    classNum?: number
+  }): Promise<{ success: boolean; group: any }> => {
+    return fetchAPI(`/enrollments/${enrollmentId}/group-member`, {
+      method: 'POST',
+      body: JSON.stringify(memberData),
+    })
+  },
+
+  // Unassign from enrollment (leave project)
+  unassign: (enrollmentId: string, token: string): Promise<{ success: boolean }> => {
+    return fetchAPI(`/enrollments/${enrollmentId}/unassign`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+}
+
+// User authentication API
+export const userAuthAPI = {
+  // Register new user
+  register: (data: {
+    enrollmentId: string
+    phoneNumber: string
+    password: string
+    name?: string
+    school?: string
+    classNum?: number
+  }): Promise<{ success: boolean; token: string; user: any }> => {
+    return fetchAPI('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  // Login user
+  login: (phoneNumber: string, password: string): Promise<{ success: boolean; token: string; user: any }> => {
+    return fetchAPI('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ phoneNumber, password }),
+    })
+  },
+
+  // Get current user profile
+  me: (token: string): Promise<{ user: any; enrollments: any[] }> => {
+    return fetchAPI('/auth/me', {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+}
+
+// Admin users API
+export const adminUsersAPI = {
+  // List users with pagination and filters
+  listUsers: (token: string, params?: {
+    page?: number
+    pageSize?: number
+    search?: string
+    completionStatus?: 'all' | 'completed' | 'in_progress' | 'not_started'
+  }): Promise<{ users: any[]; pagination: any }> => {
+    const searchParams = new URLSearchParams()
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.set(key, value.toString())
+        }
+      })
+    }
+    return fetchAPI(`/admin/users?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+
+  // Export users
+  exportUsers: (token: string, params?: {
+    search?: string
+    completionStatus?: 'all' | 'completed' | 'in_progress' | 'not_started'
+  }): Promise<{ users: any[] }> => {
+    const searchParams = new URLSearchParams()
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.set(key, value.toString())
+        }
+      })
+    }
+    return fetchAPI(`/admin/users/export?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+
+  // Get user detail
+  getUserDetail: (token: string, userId: string): Promise<any> => {
+    return fetchAPI(`/admin/users/${userId}`, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+}
+
+// Analytics API
+export const analyticsAPI = {
+  // Get analytics overview
+  getOverview: (token: string): Promise<{
+    users: { total: number; active: number; completed: number; completionRate: number }
+    engagement: { averageTimeSpent: number; totalSessions: number; averageSessionsPerUser: number }
+    projects: { totalProjects: number; averageEnrollmentsPerProject: number }
+    submissions: { total: number; averagePerUser: number }
+  }> => {
+    return fetchAPI('/admin/analytics/overview', {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+
+  // Get project performance
+  getProjectPerformance: (token: string): Promise<{ projects: any[] }> => {
+    return fetchAPI('/admin/analytics/projects', {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+}
+
+// User messages API
+export const userMessagesAPI = {
+  // List user messages
+  list: (token: string, params?: {
+    page?: number
+    pageSize?: number
+  }): Promise<{ messages: any[]; pagination: any }> => {
+    const searchParams = new URLSearchParams()
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.set(key, value.toString())
+        }
+      })
+    }
+    return fetchAPI(`/me/messages?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+
+  // Mark message as read
+  markRead: (token: string, messageId: string): Promise<{ success: boolean }> => {
+    return fetchAPI(`/me/messages/${messageId}/read`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
+
+  // Get unread count
+  getUnreadCount: (token: string): Promise<{ count: number }> => {
+    return fetchAPI('/me/messages/unread-count', {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+  },
 }
 
 export { APIError }

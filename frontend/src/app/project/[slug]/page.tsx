@@ -77,7 +77,7 @@ export default function ProjectDetailPage() {
             <p className="text-xl text-muted-foreground mb-4">{project.shortDesc}</p>
           </div>
           <div className="flex flex-col gap-2">
-            <Badge className={levelColors[project.level]} size="lg">
+            <Badge className={levelColors[project.level]}>
               {project.level}
             </Badge>
             <Badge variant="outline" className={guidanceColors[project.guidance]}>

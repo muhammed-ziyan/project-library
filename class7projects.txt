@@ -1,0 +1,75 @@
+Project 1
+Project Name: Leaf Type Finder (Photo Classifier)
+Description: Train a simple image model that identifies 3 common leaves (example: neem / tulsi / mango) from photos
+Prerequisite: A phone camera; 3 different leaf types; good lighting; basic file upload skills.
+Subjects: Science (plants), Computer (AI basics), Art (good photos).
+Tools used: Teachable Machine (runs in browser)
+Detailed steps:
+- Collect 20–30 clear photos for each leaf type (keep background simple).
+- Open Teachable Machine and start an Image Project.
+- Create 3 classes (Leaf1/Leaf2/Leaf3) and upload photos into each class.
+- Click Train Model, then test using “Upload” or camera with new leaf photos.
+- Note where it makes mistakes (bad lighting, blurred image, similar leaves).
+Submission method: 1-page PDF with (1) 3 sample training photos, (2) screenshot of training page, (3) 10 test results table, (4) short conclusion on mistakes + improvements
+
+------------------------------------------------------------
+
+Project 2
+Project Name: Bright–Medium–Dark Detector (Light & Shadow)
+Description: Train a model to classify photos into Bright / Medium / Dark to connect with the “Light” chapter
+Prerequisite: Phone camera; a torch or sunlight; one object (book/ball).
+Subjects: Science (light), Computer.
+Tools used: Teachable Machine
+Detailed steps:
+- Take 20 photos each of the same object in bright light, medium room light, and dark/shadow.
+- Make 3 classes in Teachable Machine and upload photos.
+- Train the model and test by moving the torch closer/farther.
+- Write 3 observations (example: “backlight confuses the model”).
+Submission method: 6–10 screenshots + a test table (at least 15 tests) showing true label vs model label.
+
+------------------------------------------------------------
+
+Project 3
+Project Name: Acid–Base–Neutral Predictor (Indicators)
+Description: Use indicator results (litmus/turmeric) to classify a substance as Acid / Base / Neutral, matching “Acids, Bases and Salts.”
+Prerequisite: Safe household samples (lemon juice, soap water, salt water); adult supervision; do not taste unknown substances.
+Subjects: Science (chemistry), Math (tables), Computer (classification).
+Tools used: Orange Data Mining (drag-and-drop visual tool).
+Detailed steps:
+- Make a simple table (Google Sheets/Excel) with columns like: Substance, LitmusChange (Red/Blue/No), TurmericChange (Yes/No), Label (Acid/Base/Neutral).
+- Save as CSV.
+- In Orange, load the CSV → connect to a simple learner (like Tree) → connect to Test & Score.
+- Try 5 “new” rows and see predictions.
+Submission method: Submit the CSV file + screenshots of Orange workflow + a short paragraph: “Which indicator feature helped most?”
+
+------------------------------------------------------------
+
+Project 4
+Project Name: Rust Risk Predictor (Will It Rust?)
+Description: Predict “High rust chance / Low rust chance” based on conditions, matching “Physical and Chemical Changes (rusting).”
+Prerequisite: 6–10 iron nails; small cups; water; paper towels; adult supervision.
+Subjects: Science (rusting), Math (data), Computer (classification).
+Tools used: Google Sheets + Orange (optional).
+Detailed steps:
+- Set up 4–6 conditions for nails (examples): dry, wet, wet+covered, wet+salty water.
+- Observe daily for 5–7 days and record: Condition, Day, RustSeen (Yes/No), RustLevel (0/1/2).
+Option A (super easy): Make a rule: “Wet + salty = high risk.”
+Option B (still easy): Use Orange to train a classifier on your table.
+Submission method: Photos from Day 1 and Day 7 + data table + 3-line conclusion about which condition rusted fastest.
+
+------------------------------------------------------------
+
+Project 5
+Project Name: Cooling Curve Predictor (Temperature Over Time)
+Description: Predict the temperature of warm water after some minutes using simple regression, matching “Heat.”
+Prerequisite: Thermometer (lab/clinical as advised by teacher); warm water; timer; adult supervision.
+Subjects: Science (heat), Math (graphs), Computer (prediction).
+Tools used: Google Sheets (chart + trendline) or Orange regression widget.
+Detailed steps:
+- Measure starting temperature of warm water.
+- Record temperature every 2 minutes for 20 minutes in a table: Time(min), Temp(°C).
+- Plot a line graph and add a trendline in Sheets (or run regression in Orange).
+- Use the trendline to predict temperature at 25 minutes, then actually measure and compare.
+Submission method: Submit graph + table + one sentence: “My prediction error was __ °C.”
+
+"""

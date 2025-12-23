@@ -14,7 +14,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
   // List projects with filtering
   fastify.get('/projects', async (request, reply) => {
     // Add CORS headers manually to ensure consistency
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -27,7 +27,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
   // Get project by slug
   fastify.get<{ Params: { slug: string } }>('/projects/:slug', async (request, reply) => {
     // Add CORS headers manually to ensure consistency
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -49,7 +49,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Handle preflight OPTIONS request for import
   fastify.options('/projects/import', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -61,7 +61,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
     preHandler: adminGuard
   }, async (request, reply) => {
     // Add CORS headers manually
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -166,7 +166,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Handle preflight OPTIONS request for import-json
   fastify.options('/projects/import-json', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -178,7 +178,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
     preHandler: adminGuard
   }, async (request, reply) => {
     // Add CORS headers manually
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -238,7 +238,7 @@ export const projectRoutes: FastifyPluginAsync = async (fastify) => {
     preHandler: adminGuard
   }, async (request, reply) => {
     // Add CORS headers manually
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-key')
     reply.header('Access-Control-Allow-Credentials', 'true')

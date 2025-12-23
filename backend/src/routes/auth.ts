@@ -6,7 +6,7 @@ import { PhoneNumberSchema } from '../lib/zodSchemas'
 export const authRoutes: FastifyPluginAsync = async (fastify) => {
   // Handle preflight OPTIONS requests
   fastify.options('/auth/register', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -14,7 +14,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
   })
 
   fastify.options('/auth/login', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -22,7 +22,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
   })
 
   fastify.options('/auth/me', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -31,7 +31,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Register endpoint
   fastify.post('/auth/register', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -87,7 +87,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Login endpoint
   fastify.post('/auth/login', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -135,7 +135,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Get user profile (requires authentication)
   fastify.get('/auth/me', { preHandler: userGuard }, async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')

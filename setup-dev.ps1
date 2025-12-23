@@ -54,7 +54,7 @@ Write-Host "2. Run: npm run seed:admin (to create admin user)" -ForegroundColor 
 Write-Host "3. Run: npm run dev" -ForegroundColor White
 Write-Host ""
 Write-Host "The application will be available at:" -ForegroundColor Cyan
-Write-Host "  Frontend: http://localhost:5000" -ForegroundColor White
+Write-Host "  Frontend: http://localhost:8080" -ForegroundColor White
 Write-Host "  Backend:  http://localhost:3000" -ForegroundColor White
 
 

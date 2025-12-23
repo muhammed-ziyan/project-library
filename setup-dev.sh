@@ -54,7 +54,7 @@ echo "2. Run: npm run seed:admin (to create admin user)"
 echo "3. Run: npm run dev"
 echo ""
 echo "The application will be available at:"
-echo "  Frontend: http://localhost:5000"
+echo "  Frontend: http://localhost:8080"
 echo "  Backend:  http://localhost:3000"
 
 

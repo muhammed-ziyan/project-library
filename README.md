@@ -132,7 +132,7 @@ The project follows a modern full-stack architecture:
    PORT=3000
    NODE_ENV=development
    STORAGE_PATH="./storage"
-   FRONTEND_URL="http://localhost:5000"
+   FRONTEND_URL="http://localhost:8080"
    JWT_SECRET="your-secret-key-here"
    ADMIN_KEY="your-admin-key-here"
    ```
@@ -163,14 +163,27 @@ The project follows a modern full-stack architecture:
    # Backend (http://localhost:3000)
    npm run dev:backend
 
-   # Frontend (http://localhost:5000)
+   # Frontend (http://localhost:8080)
    npm run dev:frontend
    ```
 
 6. **Access the application**
-   - Frontend: http://localhost:5000
+   - Frontend: http://localhost:8080
    - Backend API: http://localhost:3000
    - Health Check: http://localhost:3000/health
+
+### 🐳 Docker Installation (Alternative)
+
+For a containerized setup using Docker:
+
+1. **Prerequisites**: Docker and Docker Compose installed
+2. **Quick start**:
+   ```bash
+   docker-compose up --build
+   ```
+3. **Access**: Same URLs as above (ports 3000 and 5000)
+
+See **[DOCKER.md](./docs/DOCKER.md)** for complete Docker setup, configuration, and deployment guide.
 
 ## 📚 Documentation
 
@@ -178,6 +191,7 @@ Comprehensive documentation is available in the repository:
 
 - **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture and design decisions
 - **[API.md](./docs/API.md)** - Complete API reference documentation
+- **[DOCKER.md](./docs/DOCKER.md)** - Docker setup, deployment, and troubleshooting guide
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guidelines for contributing to the project
 - **[UPLOAD_GUIDE.md](./UPLOAD_GUIDE.md)** - Guide for uploading projects (YAML/JSON)
 - **[GROUP_ENROLLMENT_IMPLEMENTATION.md](./GROUP_ENROLLMENT_IMPLEMENTATION.md)** - Group enrollment feature documentation

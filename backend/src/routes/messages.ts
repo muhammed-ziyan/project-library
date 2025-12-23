@@ -5,7 +5,7 @@ import { userGuard } from '../middlewares/user'
 export const messageRoutes: FastifyPluginAsync = async (fastify) => {
   // Handle preflight OPTIONS requests
   fastify.options('/me/messages', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -13,7 +13,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
   })
 
   fastify.options('/me/messages/unread-count', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -21,7 +21,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
   })
 
   fastify.options('/me/messages/:id/read', async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -30,7 +30,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Get user messages
   fastify.get('/me/messages', { preHandler: userGuard }, async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -59,7 +59,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Get unread message count
   fastify.get('/me/messages/unread-count', { preHandler: userGuard }, async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
@@ -81,7 +81,7 @@ export const messageRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Mark message as read
   fastify.post('/me/messages/:id/read', { preHandler: userGuard }, async (request, reply) => {
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:5000')
+    reply.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     reply.header('Access-Control-Allow-Credentials', 'true')
